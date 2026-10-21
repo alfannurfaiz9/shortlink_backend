@@ -1,2 +1,6 @@
 .air.toml
 tmp
+.env
+test.sql
+db
+makefile
