@@ -144,6 +144,28 @@ paths:
       tags:
       - auth
   /links:
+    get:
+      description: Get user link
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Get user link
+      tags:
+      - links
     post:
       description: Create link
       parameters:
@@ -171,6 +193,35 @@ paths:
       security:
       - BearerToken: []
       summary: Create link
+      tags:
+      - links
+  /links/{id}:
+    delete:
+      description: Delete user link
+      parameters:
+      - description: Link ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Delete user link
       tags:
       - links
 securityDefinitions:

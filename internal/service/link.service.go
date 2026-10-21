@@ -61,3 +61,25 @@ func (l *LinkService) CreateLink(ctx context.Context, id int, body dto.Link) err
 		Slug:        slug,
 	})
 }
+
+func (l *LinkService) GetUserLink(ctx context.Context, id int) ([]dto.UserLink, error) {
+	links, err := l.lr.GetUserLink(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]dto.UserLink, 0, len(links))
+	for _, v := range links {
+		result = append(result, dto.UserLink{
+			Id:          v.Id,
+			OriginalUrl: v.OriginalUrl,
+			Slug:        v.Slug,
+		})
+	}
+
+	return result, nil
+}
+
+func (l *LinkService) DeleteUserLink(ctx context.Context, id, userId int) error {
+	return l.lr.DeleteUserLink(ctx, id, userId)
+}

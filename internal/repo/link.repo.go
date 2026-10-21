@@ -49,3 +49,49 @@ func (l *LinkRepo) CreateLink(ctx context.Context, body model.Link) error {
 
 	return nil
 }
+
+func (l *LinkRepo) GetUserLink(ctx context.Context, id int) ([]model.Link, error) {
+	sql := `
+	SELECT id, slug, original_url FROM links
+	WHERE user_id = $1`
+	args := []any{id}
+
+	rows, err := l.db.Query(ctx, sql, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	var links []model.Link
+	for rows.Next() {
+		var link model.Link
+		if err := rows.Scan(
+			&link.Id,
+			&link.Slug,
+			&link.OriginalUrl,
+		); err != nil {
+			return nil, err
+		}
+		links = append(links, link)
+	}
+
+	return links, nil
+}
+
+func (l *LinkRepo) DeleteUserLink(ctx context.Context, id, userId int) error {
+	sql := `
+	UPDATE links 
+	SET deleted_at = NOW()
+	WHERE id = $1 AND user_id = $2`
+	args := []any{id, userId}
+
+	cmd, err := l.db.Exec(ctx, sql, args...)
+	if err != nil {
+		return err
+	}
+
+	if cmd.RowsAffected() == 0 {
+		return custom_error.ErrNoRows
+	}
+
+	return nil
+}
