@@ -11,8 +11,11 @@ type Login struct {
 	Password string `json:"password" example:"password"`
 }
 
+type LoginResponse struct {
+	Token string `json:"token"`
+}
+
 type UserInfo struct {
 	Email    string `json:"email"`
 	FullName string `json:"full_name"`
-	Token    string `json:"token"`
 }

@@ -3,6 +3,9 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
+	"log"
+	"time"
 
 	"github.com/alfannurfaiz9/shortlink_backend/internal/dto"
 	custom_error "github.com/alfannurfaiz9/shortlink_backend/internal/error"
@@ -10,15 +13,18 @@ import (
 	"github.com/alfannurfaiz9/shortlink_backend/internal/repo"
 	"github.com/alfannurfaiz9/shortlink_backend/pkg"
 	"github.com/jackc/pgx/v5"
+	"github.com/redis/go-redis/v9"
 )
 
 type AuthService struct {
-	ar *repo.AuthRepo
+	ar  *repo.AuthRepo
+	rdb *redis.Client
 }
 
-func NewAuthService(ar *repo.AuthRepo) *AuthService {
+func NewAuthService(ar *repo.AuthRepo, rdb *redis.Client) *AuthService {
 	return &AuthService{
-		ar: ar,
+		ar:  ar,
+		rdb: rdb,
 	}
 }
 
@@ -45,31 +51,37 @@ func (a *AuthService) Register(ctx context.Context, body dto.Register) error {
 	return nil
 }
 
-func (a *AuthService) Login(ctx context.Context, body dto.Login) (dto.UserInfo, error) {
+func (a *AuthService) Login(ctx context.Context, body dto.Login) (dto.LoginResponse, error) {
 	if len(body.Email) == 0 || len(body.Password) == 0 {
-		return dto.UserInfo{}, custom_error.EmptyLoginField
+		return dto.LoginResponse{}, custom_error.EmptyLoginField
 	}
 
 	user, err := a.ar.FindUser(ctx, body.Email)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return dto.UserInfo{}, custom_error.InvalidEmailOrPassword
+			return dto.LoginResponse{}, custom_error.InvalidEmailOrPassword
 		}
-		return dto.UserInfo{}, err
+		return dto.LoginResponse{}, err
 	}
 
 	if err := pkg.CompareHash(body.Password, user.Password_hash); err != nil {
-		return dto.UserInfo{}, custom_error.InvalidEmailOrPassword
+		return dto.LoginResponse{}, custom_error.InvalidEmailOrPassword
 	}
 
 	claims := pkg.NewJWTClaims(user.Id)
 	token, err := claims.GenToken()
 
-	result := dto.UserInfo{
-		Email:    user.Email,
-		FullName: user.Fullname,
-		Token:    token,
+	return dto.LoginResponse{Token: token}, err
+}
+
+func (a *AuthService) Logout(ctx context.Context, token string) error {
+	key := fmt.Sprintf("shortlink:token:%s", token)
+
+	err := a.rdb.Set(ctx, key, token, 5*time.Minute).Err()
+	if err != nil {
+		log.Printf("Failed to set key %s", err)
+		return err
 	}
 
-	return result, err
+	return nil
 }

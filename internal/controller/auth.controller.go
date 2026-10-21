@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/alfannurfaiz9/shortlink_backend/internal/dto"
 	custom_error "github.com/alfannurfaiz9/shortlink_backend/internal/error"
@@ -96,7 +97,7 @@ func (a *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	userInfo, err := a.as.Login(ctx.Request.Context(), body)
+	token, err := a.as.Login(ctx.Request.Context(), body)
 
 	if err != nil {
 		log.Println(err.Error())
@@ -125,7 +126,37 @@ func (a *AuthController) Login(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, dto.Response{
 		Success: true,
-		Result:  userInfo,
+		Result:  token,
 		Message: "successfully loged in",
+	})
+}
+
+// Logout
+//
+// @Summary			Logout
+// @Description		Logout
+// @Tags			auth
+// @Router			/auth/logout	[post]
+// @Security		BearerToken
+// @Success			204				{object}	dto.Response
+// @Success			401				{object}	dto.ErrorResponse
+// @Failure			500				{object}	dto.ErrorResponse
+func (a *AuthController) Logout(ctx *gin.Context) {
+	token := ctx.GetHeader("Authorization")
+	splittedToken := strings.Split(token, " ")[1]
+
+	if err := a.as.Logout(ctx.Request.Context(), splittedToken); err != nil {
+		log.Println(err.Error())
+		ctx.JSON(http.StatusInternalServerError, dto.ErrorResponse{
+			Success: false,
+			Message: "internal server error",
+		})
+
+		return
+	}
+
+	ctx.JSON(http.StatusNoContent, dto.Response{
+		Success: true,
+		Message: "successfully loged out",
 	})
 }

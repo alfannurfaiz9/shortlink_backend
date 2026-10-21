@@ -38,8 +38,12 @@ func main() {
 		log.Println("Database is not ready \n", err.Error())
 	}
 
+	rdbConf := config.NewRdb(os.Getenv("REDIS_USER"), os.Getenv("REDIS_PASS"), os.Getenv("REDIS_HOST"), os.Getenv("REDIS_PORT"))
+	rdb := rdbConf.Connect()
+	defer rdb.Close()
+
 	r := gin.Default()
-	router.InitMainRouter(r, pool)
+	router.InitMainRouter(r, pool, rdb)
 
 	r.Run(fmt.Sprintf("%s:%s", os.Getenv("HOST"), os.Getenv("PORT")))
 }
