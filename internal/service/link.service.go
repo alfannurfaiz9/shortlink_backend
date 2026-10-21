@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"github.com/alfannurfaiz9/shortlink_backend/internal/dto"
@@ -81,5 +82,25 @@ func (l *LinkService) GetUserLink(ctx context.Context, id int) ([]dto.UserLink, 
 }
 
 func (l *LinkService) DeleteUserLink(ctx context.Context, id, userId int) error {
-	return l.lr.DeleteUserLink(ctx, id, userId)
+	if err := l.lr.DeleteUserLink(ctx, id, userId); err != nil {
+		if errors.Is(err, custom_error.ErrNoRows) {
+			return custom_error.LinkNotFound
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (l *LinkService) GetOriginalLink(ctx context.Context, slug string) (string, error) {
+	link, err := l.lr.GetOriginalLink(ctx, slug)
+
+	if err != nil {
+		if errors.Is(err, custom_error.ErrNoRows) {
+			return "", custom_error.LinkNotFound
+		}
+		return "", err
+	}
+
+	return link, nil
 }

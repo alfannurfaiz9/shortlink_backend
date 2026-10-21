@@ -2,9 +2,11 @@ package repo
 
 import (
 	"context"
+	"errors"
 
 	custom_error "github.com/alfannurfaiz9/shortlink_backend/internal/error"
 	"github.com/alfannurfaiz9/shortlink_backend/internal/model"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -81,7 +83,7 @@ func (l *LinkRepo) DeleteUserLink(ctx context.Context, id, userId int) error {
 	sql := `
 	UPDATE links 
 	SET deleted_at = NOW()
-	WHERE id = $1 AND user_id = $2`
+	WHERE id = $1 AND user_id = $2 AND deleted_at IS NULL`
 	args := []any{id, userId}
 
 	cmd, err := l.db.Exec(ctx, sql, args...)
@@ -94,4 +96,21 @@ func (l *LinkRepo) DeleteUserLink(ctx context.Context, id, userId int) error {
 	}
 
 	return nil
+}
+
+func (l *LinkRepo) GetOriginalLink(ctx context.Context, slug string) (string, error) {
+	sql := `
+	SELECT original_url FROM links
+	WHERE slug = $1 AND deleted_at IS NULL`
+	args := []any{slug}
+
+	var originalLink string
+	if err := l.db.QueryRow(ctx, sql, args...).Scan(&originalLink); err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return "", custom_error.ErrNoRows
+		}
+		return "", err
+	}
+
+	return originalLink, nil
 }

@@ -228,6 +228,39 @@ paths:
       summary: Delete user link
       tags:
       - links
+  /links/{slug}:
+    get:
+      description: Get original link
+      parameters:
+      - description: slug
+        in: path
+        name: slug
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "301":
+          description: Moved Permanently
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Get original link
+      tags:
+      - links
 securityDefinitions:
   BearerToken:
     description: Bearer Token used as identity for accessing backend

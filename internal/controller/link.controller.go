@@ -180,10 +180,10 @@ func (l *LinkController) DeleteUserLink(ctx *gin.Context) {
 
 	if err := l.ls.DeleteUserLink(ctx.Request.Context(), intParamId, userId.(int)); err != nil {
 		log.Println(err.Error())
-		if errors.Is(err, custom_error.ErrNoRows) {
+		if errors.Is(err, custom_error.LinkNotFound) {
 			ctx.JSON(http.StatusNotFound, dto.ErrorResponse{
 				Success: false,
-				Message: "link not found",
+				Message: err.Error(),
 			})
 			return
 		}
@@ -198,4 +198,41 @@ func (l *LinkController) DeleteUserLink(ctx *gin.Context) {
 		Success: true,
 		Message: "successfully delete links",
 	})
+}
+
+// GetOriginalLink
+//
+// @Summary			Get original link
+// @Description		Get original link
+// @Tags			links
+// @Produce			json
+// @Security		BearerToken
+// @Router			/links/{slug}		[get]
+// @Param        	slug   				path     	string  				true  "slug"
+// @Success			301					{object}	dto.Response
+// @Failure			401					{object}	dto.ErrorResponse
+// @Failure			404					{object}	dto.ErrorResponse
+// @Failure			500					{object}	dto.ErrorResponse
+func (l *LinkController) GetOriginalLink(ctx *gin.Context) {
+	slug := ctx.Param("slug")
+	link, err := l.ls.GetOriginalLink(ctx, slug)
+	if err != nil {
+		log.Println(err.Error())
+
+		if errors.Is(err, custom_error.LinkNotFound) {
+			ctx.JSON(http.StatusNotFound, dto.ErrorResponse{
+				Success: false,
+				Message: err.Error(),
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, dto.ErrorResponse{
+			Success: false,
+			Message: "internal server error",
+		})
+		return
+	}
+
+	ctx.Redirect(http.StatusMovedPermanently, link)
 }
