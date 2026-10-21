@@ -12,10 +12,19 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// @title           			Shortlink Backend
+// @version         			1.0
+// @description     			API docs for shortlink
+// @host      					localhost:9000
+// @BasePath  					/
+// @securityDefinitions.apikey	BearerToken
+// @in							header
+// @name						Authorization
+// @description					Bearer Token used as identity for accessing backend
 func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Println(err.Error())
-		// return
+		return
 	}
 
 	pdb := config.NewPsqlDb(os.Getenv("DBUSER"), os.Getenv("DBPASS"), os.Getenv("DBHOST"), os.Getenv("DBPORT"), os.Getenv("DBNAME"))
