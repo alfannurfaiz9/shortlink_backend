@@ -19,7 +19,7 @@ func NewJWTClaims(id int) *JWTClaims {
 	return &JWTClaims{
 		Id:        id,
 		Issuer:    os.Getenv("JWT_ISSUER"),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 10)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 15)),
 	}
 }
 

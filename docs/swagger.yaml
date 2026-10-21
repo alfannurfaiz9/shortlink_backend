@@ -7,6 +7,18 @@ definitions:
       success:
         type: boolean
     type: object
+  dto.Link:
+    properties:
+      original_url:
+        example: www.google.com
+        type: string
+      slug:
+        example: abs1Ax
+        maxLength: 50
+        type: string
+    required:
+    - original_url
+    type: object
   dto.Login:
     properties:
       email:
@@ -131,6 +143,36 @@ paths:
       summary: Create new user
       tags:
       - auth
+  /links:
+    post:
+      description: Create link
+      parameters:
+      - description: body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Link'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      security:
+      - BearerToken: []
+      summary: Create link
+      tags:
+      - links
 securityDefinitions:
   BearerToken:
     description: Bearer Token used as identity for accessing backend

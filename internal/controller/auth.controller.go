@@ -46,7 +46,7 @@ func (a *AuthController) Register(ctx *gin.Context) {
 		return
 	}
 
-	if err := a.as.Register(ctx, body); err != nil {
+	if err := a.as.Register(ctx.Request.Context(), body); err != nil {
 		log.Println(err.Error())
 		if errors.Is(err, custom_error.UserAlreadyExist) {
 			ctx.JSON(http.StatusNotAcceptable, dto.ErrorResponse{

@@ -77,7 +77,7 @@ func (a *AuthService) Login(ctx context.Context, body dto.Login) (dto.LoginRespo
 func (a *AuthService) Logout(ctx context.Context, token string) error {
 	key := fmt.Sprintf("shortlink:token:%s", token)
 
-	err := a.rdb.Set(ctx, key, token, 5*time.Minute).Err()
+	err := a.rdb.Set(ctx, key, token, 15*time.Minute).Err()
 	if err != nil {
 		log.Printf("Failed to set key %s", err)
 		return err

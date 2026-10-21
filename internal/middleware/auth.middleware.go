@@ -68,7 +68,7 @@ func AuthMiddleware(rdb *redis.Client) gin.HandlerFunc {
 			return
 		}
 
-		ctx.Set("id", token.ID)
+		ctx.Set("id", token.Id)
 		ctx.Next()
 	}
 }
