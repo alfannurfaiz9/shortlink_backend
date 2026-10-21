@@ -53,7 +53,7 @@ func (l *LinkRepo) CreateLink(ctx context.Context, body model.Link) error {
 func (l *LinkRepo) GetUserLink(ctx context.Context, id int) ([]model.Link, error) {
 	sql := `
 	SELECT id, slug, original_url FROM links
-	WHERE user_id = $1`
+	WHERE user_id = $1 AND deleted_at IS NULL`
 	args := []any{id}
 
 	rows, err := l.db.Query(ctx, sql, args...)
