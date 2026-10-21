@@ -47,3 +47,19 @@ func (a *AuthRepo) Register(ctx context.Context, body model.User) error {
 
 	return nil
 }
+
+func (a *AuthRepo) FindUser(ctx context.Context, email string) (model.User, error) {
+	sql := "SELECT id, full_name, email, password_hash FROM users WHERE email=$1"
+	args := []any{email}
+
+	var user model.User
+	if err := a.db.QueryRow(ctx, sql, args...).Scan(
+		&user.Id,
+		&user.Fullname,
+		&user.Email,
+		&user.Password_hash); err != nil {
+		return model.User{}, err
+	}
+
+	return user, nil
+}

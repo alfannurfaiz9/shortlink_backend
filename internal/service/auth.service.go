@@ -44,3 +44,32 @@ func (a *AuthService) Register(ctx context.Context, body dto.Register) error {
 
 	return nil
 }
+
+func (a *AuthService) Login(ctx context.Context, body dto.Login) (dto.UserInfo, error) {
+	if len(body.Email) == 0 || len(body.Password) == 0 {
+		return dto.UserInfo{}, custom_error.EmptyLoginField
+	}
+
+	user, err := a.ar.FindUser(ctx, body.Email)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return dto.UserInfo{}, custom_error.InvalidEmailOrPassword
+		}
+		return dto.UserInfo{}, err
+	}
+
+	if err := pkg.CompareHash(body.Password, user.Password_hash); err != nil {
+		return dto.UserInfo{}, custom_error.InvalidEmailOrPassword
+	}
+
+	claims := pkg.NewJWTClaims(user.Id)
+	token, err := claims.GenToken()
+
+	result := dto.UserInfo{
+		Email:    user.Email,
+		FullName: user.Fullname,
+		Token:    token,
+	}
+
+	return result, err
+}

@@ -5,3 +5,14 @@ type Register struct {
 	Email    string `json:"email" example:"yourname@mail.com" binding:"required,email"`
 	Password string `json:"password" example:"password" binding:"required,min=6"`
 }
+
+type Login struct {
+	Email    string `json:"email" example:"yourname@mail.com"`
+	Password string `json:"password" example:"password"`
+}
+
+type UserInfo struct {
+	Email    string `json:"email"`
+	FullName string `json:"full_name"`
+	Token    string `json:"token"`
+}

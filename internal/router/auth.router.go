@@ -16,4 +16,5 @@ func InitAuthRouter(router *gin.Engine, db *pgxpool.Pool) {
 	ac := controller.NewController(as)
 
 	r.POST("register", ac.Register)
+	r.POST("login", ac.Login)
 }
