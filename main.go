@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/alfannurfaiz9/shortlink_backend/internal/config"
+	"github.com/alfannurfaiz9/shortlink_backend/internal/middleware"
 	"github.com/alfannurfaiz9/shortlink_backend/internal/router"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -43,6 +44,7 @@ func main() {
 	defer rdb.Close()
 
 	r := gin.Default()
+	r.Use(middleware.Cors)
 	router.InitMainRouter(r, pool, rdb)
 
 	r.Run(fmt.Sprintf("%s:%s", os.Getenv("HOST"), os.Getenv("PORT")))

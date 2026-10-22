@@ -47,15 +47,7 @@ func (l *LinkController) CreateLink(ctx *gin.Context) {
 		return
 	}
 
-	id, exist := ctx.Get("id")
-	if !exist {
-		log.Println("Error get token")
-		ctx.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Success: false,
-			Message: "internal server error",
-		})
-		return
-	}
+	id, _ := ctx.Get("id")
 
 	if err := l.ls.CreateLink(ctx.Request.Context(), id.(int), body); err != nil {
 		log.Println(err.Error())
@@ -116,15 +108,7 @@ func (l *LinkController) CreateLink(ctx *gin.Context) {
 // @Failure			401				{object}	dto.ErrorResponse
 // @Failure			500				{object}	dto.ErrorResponse
 func (l *LinkController) GetUserLink(ctx *gin.Context) {
-	id, exist := ctx.Get("id")
-	if !exist {
-		log.Println("Error get token")
-		ctx.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Success: false,
-			Message: "internal server error",
-		})
-		return
-	}
+	id, _ := ctx.Get("id")
 
 	result, err := l.ls.GetUserLink(ctx.Request.Context(), id.(int))
 	if err != nil {
@@ -168,17 +152,9 @@ func (l *LinkController) DeleteUserLink(ctx *gin.Context) {
 		return
 	}
 
-	userId, exist := ctx.Get("id")
-	if !exist {
-		log.Println("Error get token")
-		ctx.JSON(http.StatusInternalServerError, dto.ErrorResponse{
-			Success: false,
-			Message: "internal server error",
-		})
-		return
-	}
+	id, _ := ctx.Get("id")
 
-	if err := l.ls.DeleteUserLink(ctx.Request.Context(), intParamId, userId.(int)); err != nil {
+	if err := l.ls.DeleteUserLink(ctx.Request.Context(), intParamId, id.(int)); err != nil {
 		log.Println(err.Error())
 		if errors.Is(err, custom_error.LinkNotFound) {
 			ctx.JSON(http.StatusNotFound, dto.ErrorResponse{

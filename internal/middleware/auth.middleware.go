@@ -25,14 +25,7 @@ func AuthMiddleware(rdb *redis.Client) gin.HandlerFunc {
 		}
 
 		result := strings.Split(bearer, " ")
-		if len(result) != 2 {
-			ctx.AbortWithStatusJSON(http.StatusUnauthorized, dto.ErrorResponse{
-				Success: false,
-				Message: "invalid bearer token",
-			})
-			return
-		}
-		if result[0] != "Bearer" {
+		if len(result) != 2 || result[0] != "Bearer" {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, dto.ErrorResponse{
 				Success: false,
 				Message: "invalid bearer token",
@@ -40,8 +33,9 @@ func AuthMiddleware(rdb *redis.Client) gin.HandlerFunc {
 			return
 		}
 
-		var token pkg.JWTClaims
+		token := &pkg.JWTClaims{}
 		err := token.DecodeToken(result[1])
+
 		if err != nil {
 			if errors.Is(err, jwt.ErrTokenExpired) || errors.Is(err, jwt.ErrTokenInvalidIssuer) {
 				ctx.AbortWithStatusJSON(http.StatusUnauthorized, dto.ErrorResponse{
@@ -64,7 +58,6 @@ func AuthMiddleware(rdb *redis.Client) gin.HandlerFunc {
 				Success: false,
 				Message: "please login first",
 			})
-
 			return
 		}
 

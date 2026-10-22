@@ -75,6 +75,7 @@ func (l *LinkService) GetUserLink(ctx context.Context, id int) ([]dto.UserLink, 
 			Id:          v.Id,
 			OriginalUrl: v.OriginalUrl,
 			Slug:        v.Slug,
+			CreatedAt:   v.CreatedAt,
 		})
 	}
 
