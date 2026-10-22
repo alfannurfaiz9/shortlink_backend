@@ -159,6 +159,15 @@ const docTemplate = `{
                     "links"
                 ],
                 "summary": "Get user link",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "slug",
+                        "description": "name slug",
+                        "name": "slug",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",

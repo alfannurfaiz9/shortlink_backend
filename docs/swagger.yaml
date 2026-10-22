@@ -146,6 +146,12 @@ paths:
   /links:
     get:
       description: Get user link
+      parameters:
+      - description: name slug
+        format: slug
+        in: query
+        name: slug
+        type: string
       produces:
       - application/json
       responses:

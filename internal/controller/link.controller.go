@@ -104,13 +104,17 @@ func (l *LinkController) CreateLink(ctx *gin.Context) {
 // @Produce			json
 // @Security		BearerToken
 // @Router			/links			[get]
+//
+//	@Param        	slug    		query     	string  			false  "name slug"  Format(slug)
+//
 // @Success			200				{object}	dto.Response
 // @Failure			401				{object}	dto.ErrorResponse
 // @Failure			500				{object}	dto.ErrorResponse
 func (l *LinkController) GetUserLink(ctx *gin.Context) {
 	id, _ := ctx.Get("id")
+	slug := ctx.Query("slug")
 
-	result, err := l.ls.GetUserLink(ctx.Request.Context(), id.(int))
+	result, err := l.ls.GetUserLink(ctx.Request.Context(), id.(int), slug)
 	if err != nil {
 		log.Println("Error get token")
 		ctx.JSON(http.StatusInternalServerError, dto.ErrorResponse{

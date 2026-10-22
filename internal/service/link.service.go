@@ -63,8 +63,8 @@ func (l *LinkService) CreateLink(ctx context.Context, id int, body dto.Link) err
 	})
 }
 
-func (l *LinkService) GetUserLink(ctx context.Context, id int) ([]dto.UserLink, error) {
-	links, err := l.lr.GetUserLink(ctx, id)
+func (l *LinkService) GetUserLink(ctx context.Context, id int, slug string) ([]dto.UserLink, error) {
+	links, err := l.lr.GetUserLink(ctx, id, slug)
 	if err != nil {
 		return nil, err
 	}

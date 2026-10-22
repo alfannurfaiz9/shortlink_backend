@@ -52,11 +52,13 @@ func (l *LinkRepo) CreateLink(ctx context.Context, body model.Link) error {
 	return nil
 }
 
-func (l *LinkRepo) GetUserLink(ctx context.Context, id int) ([]model.Link, error) {
+func (l *LinkRepo) GetUserLink(ctx context.Context, id int, slug string) ([]model.Link, error) {
 	sql := `
 	SELECT id, slug, original_url, created_at FROM links
-	WHERE user_id = $1 AND deleted_at IS NULL`
-	args := []any{id}
+	WHERE user_id = $1 AND deleted_at IS NULL
+	AND slug ILIKE $2
+	LIMIT 5`
+	args := []any{id, "%" + slug + "%"}
 
 	rows, err := l.db.Query(ctx, sql, args...)
 	if err != nil {
