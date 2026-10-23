@@ -115,13 +115,13 @@ POSTGRES_DB={YOUR_DATABASE_NAME}
 PostgreSQL (it reads the `POSTGRES_*` values from `.env`):
 
 ```bash
-docker run --name {CONTAINER_NAME} -d --env-file .env -p {HOST_PORT}:5432 -v {DOCKER_VOLUME}:/var/lib/postgresql postgres:16
+docker run --name {CONTAINER_NAME} -d --env-file {POSTGRES_ENV_PATH} -p {HOST_PORT}:5432 -v {DOCKER_VOLUME}:/var/lib/postgresql postgres:16
 ```
 
 Redis:
 
 ```bash
-docker run -d --name {CONTAINER_NAME} -p {HOST_PORT}:6379 -v {PATH_TO_redis.conf}:/usr/local/etc/redis/redis.conf -v {DOCKER_VOLUME}:/data redis:8.10.2 redis-server /usr/local/etc/redis/redis.conf
+docker run --name {CONTAINER_NAME} -d -p {HOST_PORT}:6379 -v ./cache/redis.conf:/usr/local/etc/redis/redis.conf redis:8.4.7 redis-server /usr/local/etc/redis/redis.conf
 ```
 
 
