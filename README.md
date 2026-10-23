@@ -100,7 +100,7 @@ JWT_ISSUER={YOUR_ISSER}
 
 ```bash
 docker pull postgres:16
-docker pull redis:8.10.2
+docker pull redis:8.4.7
 ```
 
 ### 4. Start PostgreSQL and Redis
