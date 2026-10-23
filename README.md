@@ -8,8 +8,6 @@
   <a href="https://jwt.io/"><img src="https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white" alt="JWT" /></a>
   <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" /></a>
   <a href="https://swagger.io/"><img src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black" alt="Swagger" /></a>
-  <a href="https://www.xendit.co/"><img src="https://img.shields.io/badge/Xendit-4573FF?style=for-the-badge&logoColor=white" alt="Xendit" /></a>
-  <a href="https://github.com/features/actions"><img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white" alt="GitHub Actions" /></a>
 </p>
 
 A RESTful backend for a shortlink application, built with Go and the Gin framework. It handles user authentication, custom URL shortening, high-performance link redirection, click analytics and tracking, and user link management. Built as a submission test during the Koda Academy bootcamp, Gin Exercise Koda Batch 9.
@@ -71,7 +69,7 @@ Request -> Router -> Middleware -> Controller -> Service -> Repository -> Postgr
 ### 1. Clone the repository
 
 ```bash
-git clone -b development https://github.com/alfannurfaiz9/shortlink_backend.git
+git clone https://github.com/alfannurfaiz9/shortlink_backend.git
 cd shortlink_backend
 ```
 
@@ -98,31 +96,32 @@ JWT_KEY={YOUR_JWT_KEY}
 JWT_ISSUER={YOUR_ISSER}
 ```
 
-### 3. Start PostgreSQL and Redis
+### 3. Pull PostgreSQL and Redis Image
 
 ```bash
 docker pull postgres:16
 docker pull redis:8.10.2
 ```
 
+### 4. Start PostgreSQL and Redis
+Create `.env` file for PostgreSQL
+```env
+POSTGRES_PASSWORD={YOUR_PASSWORD}
+POSTGRES_USER={YOUR_USERNAME}
+POSTGRES_DB={YOUR_DATABASE_NAME}
+```
+
+
 PostgreSQL (it reads the `POSTGRES_*` values from `.env`):
 
 ```bash
-docker run --name {CONTAINER_NAME} -d --env-file .env \
-  -p {HOST_PORT}:5432 \
-  -v {DOCKER_VOLUME}:/var/lib/postgresql \
-  postgres:16
+docker run --name {CONTAINER_NAME} -d --env-file .env -p {HOST_PORT}:5432 -v {DOCKER_VOLUME}:/var/lib/postgresql postgres:16
 ```
 
 Redis:
 
 ```bash
-docker run -d --name {CONTAINER_NAME} \
-  -p {HOST_PORT}:6379 \
-  -v {PATH_TO_redis.conf}:/usr/local/etc/redis/redis.conf \
-  -v {DOCKER_VOLUME}:/data \
-  --restart unless-stopped \
-  redis:8.10.2 redis-server /usr/local/etc/redis/redis.conf
+docker run -d --name {CONTAINER_NAME} -p {HOST_PORT}:6379 -v {PATH_TO_redis.conf}:/usr/local/etc/redis/redis.conf -v {DOCKER_VOLUME}:/data redis:8.10.2 redis-server /usr/local/etc/redis/redis.conf
 ```
 
 
@@ -141,7 +140,7 @@ go run main.go
 
 ### 7. Run the react application
 
-[![frontend](https://img.shields.io/badge/FRONTEND-REACT-blue?logo=react&logoColor=WHITE)](https://github.com/alfannurfaiz9/shortlink_backend.git)
+[![frontend](https://img.shields.io/badge/FRONTEND-REACT-blue?logo=react&logoColor=WHITE)](https://github.com/alfannurfaiz9/shortlink_frontend.git)
 
 ## API Reference
 
